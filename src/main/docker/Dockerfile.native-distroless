@@ -1,0 +1,27 @@
+####
+# This Dockerfile is used in order to build a container that runs the Quarkus application in native (no JVM) mode.
+# It uses a distroless image, tuned for Quarkus native executables.
+# It greatly reduces the size of the resulting container image.
+# Check https://github.com/GoogleContainerTools/distroless for further information about this image.
+#
+# Before building the container image run:
+#
+# ./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
+#
+# Then, build the image with:
+#
+# docker build -f src/main/docker/Dockerfile.native-distroless -t quarkus/quarkus-test-native-distroless .
+#
+# Then run the container using:
+#
+# docker run -i --rm -p 8080:8080 quarkus/quarkus-test-native-distroless
+#
+####
+FROM quay.io/quarkus/quarkus-distroless-image:1.0
+WORKDIR /work/
+COPY build/*-runner /work/application
+
+EXPOSE 8080
+USER nonroot
+
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]

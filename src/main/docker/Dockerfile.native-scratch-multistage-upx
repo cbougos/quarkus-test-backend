@@ -1,0 +1,51 @@
+####
+# This Dockerfile is used in order to build a container that runs the Quarkus application in native (no JVM) mode.
+# It uses a scratch base image.
+# It tremendously reduces the size of the resulting container image.
+# Check https://hub.docker.com/_/scratch for further information about this image.
+# Build the image with:
+#
+# docker build -f src/main/docker/Dockerfile.native-scratch-multistage-upx -t quarkus/quarkus-test-native-scratch-multistage-upx .
+#
+# Then run the container using:
+#
+# docker run -i --rm -p 8080:8080 quarkus/quarkus-test-native-scratch-multistage-upx
+#
+####
+## Stage 1 : build with maven builder image with native capabilities
+FROM quay.io/quarkus/ubi-quarkus-native-image:22.2-java17 AS stage1
+USER root
+RUN microdnf install make gcc
+COPY --chown=quarkus:quarkus gradlew /code/gradlew
+COPY --chown=quarkus:quarkus gradle /code/gradle
+COPY --chown=quarkus:quarkus build.gradle /code/
+COPY --chown=quarkus:quarkus settings.gradle /code/
+COPY --chown=quarkus:quarkus gradle.properties /code/
+RUN mkdir /musl
+RUN curl -L -o musl.tar.gz https://more.musl.cc/10.2.1/x86_64-linux-musl/x86_64-linux-musl-native.tgz
+RUN tar -xvzf musl.tar.gz -C /musl --strip-components 1
+RUN echo "MUSL UNZIPPED SUCCESSFULLY!"
+RUN curl -L -o zlib.tar.gz https://zlib.net/fossils/zlib-1.2.11.tar.gz
+RUN mkdir zlib
+RUN tar -xvzf zlib.tar.gz -C zlib --strip-components 1
+RUN echo "ZLIB UNZIPPED SUCCESSFULLY!"
+WORKDIR zlib
+RUN ./configure --static --prefix=/musl
+RUN make
+RUN make install
+RUN cd ..
+RUN rm -rf zlib
+RUN rm -f zlib.tar.gz
+RUN rm -f musl.tar.gz
+ENV PATH="/musl/bin:${PATH}"
+USER quarkus
+WORKDIR /code
+COPY src /code/src
+RUN ./gradlew build -Dquarkus.package.type=native -Dquarkus.native.additional-build-args="--static","--libc=musl"
+WORKDIR /code/build
+RUN upx --lzma --best *-runner -o application.upx
+
+## Stage 2 : create the docker final image
+FROM scratch
+COPY --from=stage1 /code/build/application.upx /application.upx
+ENTRYPOINT [ "/application.upx" ]
