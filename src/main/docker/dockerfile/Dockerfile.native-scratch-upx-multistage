@@ -5,7 +5,7 @@
 # Check https://hub.docker.com/_/scratch for further information about this image.
 # Build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native-scratch-multistage-upx -t quarkus/quarkus-test-native-scratch-multistage-upx .
+# docker build -f src/main/docker/Dockerfile.native-normal-scratch-multistage-upx -t quarkus/quarkus-test-native-scratch-multistage-upx .
 #
 # Then run the container using:
 #

@@ -19,14 +19,14 @@ services:
       - mongodb-log:/var/log/mongodb
       - ../mongo-init/:/docker-entrypoint-initdb.d/:ro
 
-  quarkus-test-backend-native:
-    container_name: quarkus-test-backend-native
+  quarkus-test-backend-native-normal:
+    container_name: quarkus-test-backend-native-normal
     depends_on:
       - quarkus-test-mongo-db
     build:
       context: ../../../../
-      dockerfile: src/main/docker/dockerfile/Dockerfile.native-multistage
-    image: quarkus-test-backend-image-native
+      dockerfile: src/main/docker/dockerfile/Dockerfile.native-normal-multistage
+    image: quarkus-test-backend-image-native-normal
     ports:
       - "8080:8080"
     networks:

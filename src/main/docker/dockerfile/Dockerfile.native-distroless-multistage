@@ -6,7 +6,7 @@
 #
 # Build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native-distroless -t quarkus/quarkus-test-native-distroless .
+# docker build -f src/main/docker/Dockerfile.native-normal-distroless -t quarkus/quarkus-test-native-distroless .
 #
 # Then run the container using:
 #

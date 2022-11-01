@@ -3,7 +3,7 @@
 #
 # Build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native -t quarkus/quarkus-test-native .
+# docker build -f src/main/docker/Dockerfile.native-normal -t quarkus/quarkus-test-native .
 #
 # Then run the container using:
 #

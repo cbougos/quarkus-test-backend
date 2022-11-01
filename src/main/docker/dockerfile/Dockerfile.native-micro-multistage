@@ -6,7 +6,7 @@
 #
 # Build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native-micro-multistage -t quarkus/quarkus-test-native-micro-multistage .
+# docker build -f src/main/docker/Dockerfile.native-normal-micro-multistage -t quarkus/quarkus-test-native-micro-multistage .
 #
 # Then run the container using:
 #
