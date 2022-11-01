@@ -1,20 +1,17 @@
 ####
 # This Dockerfile is used in order to build a container that runs the Quarkus application in native (no JVM) mode.
-# It uses a micro base image, tuned for Quarkus native executables.
-# It reduces the size of the resulting container image.
-# Check https://quarkus.io/guides/quarkus-runtime-base-image for further information about this image.
 #
 # Build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native-micro-multistage -t quarkus/quarkus-test-native-micro-multistage .
+# docker build -f src/main/docker/Dockerfile.native -t quarkus/quarkus-test-native .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/quarkus-test-native-micro-multistage
+# docker run -i --rm -p 8080:8080 quarkus/quarkus-test-native
 #
 ####
 ## Stage 1 : build with maven builder image with native capabilities
-FROM quay.io/quarkus/ubi-quarkus-native-image:22.2-java17 AS build
+FROM quay.io/quarkus/ubi-quarkus-native-image:22.2-java17 AS stage1
 USER root
 RUN microdnf install findutils
 COPY --chown=quarkus:quarkus gradlew /code/gradlew
@@ -28,9 +25,12 @@ COPY src /code/src
 RUN ./gradlew build -Dquarkus.package.type=native
 
 ## Stage 2 : create the docker final image
-FROM quay.io/quarkus/quarkus-micro-image:1.0
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.6
 WORKDIR /work/
-COPY --from=build /code/build/*-runner /work/application
-RUN chmod 775 /work
+RUN chown 1001 /work
+RUN chmod "g+rwX" /work
+RUN chown 1001:root /work
+COPY --from=stage1 --chown=1001:root /code/build/*-runner /work/application
 EXPOSE 8080
+USER 1001
 CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
