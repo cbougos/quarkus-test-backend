@@ -4,7 +4,7 @@ services:
 
   quarkus-test-mongo-db:
     container_name: quarkus-test-mongo-db
-    image: mongo:latest
+    image: cbougos/quarkus-test-mongo-db-image
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -17,16 +17,12 @@ services:
     volumes:
       - mongodb-data:/data/db
       - mongodb-log:/var/log/mongodb
-      - ../mongo-init/:/docker-entrypoint-initdb.d/:ro
 
   quarkus-test-backend-native-distroless:
     container_name: quarkus-test-backend-native-distroless
     depends_on:
       - quarkus-test-mongo-db
-    build:
-      context: ../../../../
-      dockerfile: src/main/docker/dockerfile/Dockerfile.native-distroless-multistage
-    image: quarkus-test-backend-image-native-distroless
+    image: cbougos/quarkus-test-backend-image-native-distroless
     ports:
       - "8080:8080"
     networks:

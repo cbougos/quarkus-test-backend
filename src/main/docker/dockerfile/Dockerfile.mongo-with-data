@@ -1,0 +1,2 @@
+FROM mongo:latest
+COPY src/main/docker/mongo-init/mongo-init.js /docker-entrypoint-initdb.d/mongo-init.js

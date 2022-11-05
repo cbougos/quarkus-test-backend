@@ -10,30 +10,13 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root_password
       MONGO_INITDB_ROOT_DATABASE: admin
-    networks:
-      - quarkus-test-network
     ports:
       - "27017:27017"
     volumes:
       - mongodb-data:/data/db
       - mongodb-log:/var/log/mongodb
-
-  quarkus-test-backend-native-micro:
-    container_name: quarkus-test-backend-native-micro
-    depends_on:
-      - quarkus-test-mongo-db
-    image: cbougos/quarkus-test-backend-image-native-micro
-    ports:
-      - "8080:8080"
-    networks:
-      - quarkus-test-network
-
 volumes:
   mongodb-data:
     driver: local
   mongodb-log:
     driver: local
-
-networks:
-  quarkus-test-network:
-    driver: bridge
