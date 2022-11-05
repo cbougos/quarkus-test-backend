@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: quarkus-backend
-          image: cbougos/quarkus-test-backend-image-native-scratch-upx:latest
+          image: cbougos/quarkus-test-backend-native-scratch-upx
           ports:
             - containerPort: 8080
           env:

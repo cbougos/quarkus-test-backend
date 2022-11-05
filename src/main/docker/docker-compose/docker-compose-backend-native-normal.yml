@@ -3,8 +3,8 @@ version: '3.8'
 services:
 
   quarkus-test-mongo-db:
-    container_name: quarkus-test-mongo-db
-    image: cbougos/quarkus-test-mongo-db-image
+    container_name: mongo-with-data
+    image: cbougos/quarkus-test-mongo-with-data
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -18,11 +18,11 @@ services:
       - mongodb-data:/data/db
       - mongodb-log:/var/log/mongodb
 
-  quarkus-test-backend-jvm:
-    container_name: quarkus-test-backend-jvm
+  quarkus-test-backend-native-normal:
+    container_name: quarkus-test-backend-native-normal
     depends_on:
       - quarkus-test-mongo-db
-    image: cbougos/quarkus-test-backend-image-jvm
+    image: cbougos/quarkus-test-backend-native-normal
     ports:
       - "8080:8080"
     networks:

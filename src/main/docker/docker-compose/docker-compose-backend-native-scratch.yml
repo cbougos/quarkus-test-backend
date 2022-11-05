@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+
+  quarkus-test-mongo-db:
+    container_name: mongo-with-data
+    image: cbougos/quarkus-test-mongo-with-data
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root_password
+      MONGO_INITDB_ROOT_DATABASE: admin
+    networks:
+      - quarkus-test-network
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+      - mongodb-log:/var/log/mongodb
+
+  quarkus-test-backend-native-scratch:
+    container_name: quarkus-test-backend-native-scratch
+    depends_on:
+      - quarkus-test-mongo-db
+    image: cbougos/quarkus-test-backend-native-scratch
+    ports:
+      - "8080:8080"
+    networks:
+      - quarkus-test-network
+
+volumes:
+  mongodb-data:
+    driver: local
+  mongodb-log:
+    driver: local
+
+networks:
+  quarkus-test-network:
+    driver: bridge
